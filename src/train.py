@@ -75,6 +75,7 @@ tmp = np.squeeze(Y_train[ix]).astype(np.float32)
 plt.imshow(np.dstack((tmp,tmp,tmp)))
 plt.show()
 
+
 # Define IoU metric
 def mean_iou(y_true, y_pred):
     prec = []
@@ -87,9 +88,10 @@ def mean_iou(y_true, y_pred):
         prec.append(score)
     return K.mean(K.stack(prec), axis=0)
 
+
 # Build U-Net model
 inputs = Input((im_height, im_width, im_chan))
-s = Lambda(lambda x: x / 255) (inputs)
+s = Lambda(lambda x: x / 255)(inputs)
 
 c1 = Conv2D(8, (3, 3), activation='relu', padding='same') (s)
 c1 = Conv2D(8, (3, 3), activation='relu', padding='same') (c1)
@@ -186,6 +188,7 @@ plt.show()
 tmp = np.squeeze(preds_train_t[ix]).astype(np.float32)
 plt.imshow(np.dstack((tmp,tmp,tmp)))
 plt.show()
+
 
 def RLenc(img, order='F', format=True):
     """

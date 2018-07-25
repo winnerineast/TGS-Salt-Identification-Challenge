@@ -4,5 +4,6 @@ tensorflow
 pandas
 numpy
 tqdm
-opencv
+opencv-python
 jupyter
+cython
