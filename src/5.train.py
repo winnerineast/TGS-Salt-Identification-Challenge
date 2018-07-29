@@ -1,5 +1,4 @@
 import os
-import sys
 import numpy as np
 import tensorflow as tf
 
@@ -22,22 +21,36 @@ im_chan = 1
 path_train = '../input/train/'
 
 train_ids = next(os.walk(path_train+"images"))[2]
+i = 0
+for n, id_ in tqdm_notebook(enumerate(train_ids), total=len(train_ids)):
+    statinfo = os.stat(path_train + '/images/' + id_)
+    if statinfo.st_size < 108:
+        continue
+    i += 1
 
+i += 1
 # Get and resize train images and masks
-X_train = np.zeros((len(train_ids), im_height, im_width, im_chan), dtype=np.uint8)
-Y_train = np.zeros((len(train_ids), im_height, im_width, 1), dtype=np.bool)
+X_train = np.zeros((i, im_height, im_width, im_chan), dtype=np.uint8)
+Y_train = np.zeros((i, im_height, im_width, 1), dtype=np.bool)
 
 print('Getting and resizing train images and masks ... ')
-
+i = 0
 for n, id_ in tqdm_notebook(enumerate(train_ids), total=len(train_ids)):
     path = path_train
+    # Remove black data
+    statinfo = os.stat(path + '/images/' + id_)
+    if statinfo.st_size < 108:
+        continue
+    i += 1
+    print(path + '/images/' + id_, ":", statinfo.st_size)
     img = load_img(path + '/images/' + id_)
-    x = img_to_array(img)[:,:,1]
+    x = img_to_array(img)[:, :, 1]
     x = resize(x, (128, 128, 1), mode='constant', preserve_range=True)
-    X_train[n] = x
-    mask = img_to_array(load_img(path + '/masks/' + id_))[:,:,1]
-    Y_train[n] = resize(mask, (128, 128, 1), mode='constant', preserve_range=True)
+    X_train[i] = x
+    mask = img_to_array(load_img(path + '/masks/' + id_))[:, :, 1]
+    Y_train[i] = resize(mask, (128, 128, 1), mode='constant', preserve_range=True)
 
+print("Total training records are ", len(X_train))
 print('Done!')
 
 
@@ -117,6 +130,6 @@ results = model.fit(X_train, Y_train, validation_split=0.1, batch_size=8, epochs
                     callbacks=[earlystopper, checkpointer])
 
 # Predict on train, val and test
-model = load_model('model-tgs-salt-1.h5', custom_objects={'mean_iou': mean_iou})
-preds_train = model.predict(X_train[:int(X_train.shape[0]*0.9)], verbose=1)
-preds_val = model.predict(X_train[int(X_train.shape[0]*0.9):], verbose=1)
+# model = load_model('model-tgs-salt-1.h5', custom_objects={'mean_iou': mean_iou})
+# preds_train = model.predict(X_train[:int(X_train.shape[0]*0.9)], verbose=1)
+# preds_val = model.predict(X_train[int(X_train.shape[0]*0.9):], verbose=1)

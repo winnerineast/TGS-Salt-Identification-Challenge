@@ -57,11 +57,8 @@ def mean_iou(y_true, y_pred):
 # Build U-Net model
 inputs = Input((im_height, im_width, im_chan))
 s = Lambda(lambda x: x / 255)(inputs)
-c0 = Conv2D(4, (3, 3), activation='relu', padding='same')(s)
-c0 = Conv2D(4, (3, 3), activation='relu', padding='same')(c0)
-p0 = MaxPooling2D((2, 2))(c0)
 
-c1 = Conv2D(8, (3, 3), activation='relu', padding='same')(p0)
+c1 = Conv2D(8, (3, 3), activation='relu', padding='same')(s)
 c1 = Conv2D(8, (3, 3), activation='relu', padding='same')(c1)
 p1 = MaxPooling2D((2, 2))(c1)
 
@@ -100,12 +97,7 @@ u9 = concatenate([u9, c1], axis=3)
 c9 = Conv2D(8, (3, 3), activation='relu', padding='same')(u9)
 c9 = Conv2D(8, (3, 3), activation='relu', padding='same')(c9)
 
-u10 = Conv2DTranspose(4, (2, 2), strides=(2, 2), padding='same')(c9)
-u10 = concatenate([u10, c0], axis=3)
-c10 = Conv2D(4, (3, 3), activation='relu', padding='same')(u10)
-c10 = Conv2D(4, (3, 3), activation='relu', padding='same')(c10)
-
-outputs = Conv2D(1, (1, 1), activation='sigmoid')(c10)
+outputs = Conv2D(1, (1, 1), activation='sigmoid')(c9)
 
 model = Model(inputs=[inputs], outputs=[outputs])
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[mean_iou])
