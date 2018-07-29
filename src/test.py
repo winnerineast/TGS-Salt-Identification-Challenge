@@ -1,5 +1,4 @@
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import sys
 
 import pandas as pd
@@ -7,14 +6,13 @@ import numpy as np
 
 from tqdm import tqdm_notebook, tnrange
 from skimage.transform import resize
-from skimage.morphology import label
 
 from keras.models import Model, load_model
 from keras import backend as K
 
 import tensorflow as tf
 
-from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
+from keras.preprocessing.image import img_to_array, load_img
 
 
 # Set some parameters
@@ -40,6 +38,7 @@ for n, id_ in tqdm_notebook(enumerate(test_ids), total=len(test_ids)):
 
 print('Done!')
 
+
 # Define IoU metric
 def mean_iou(y_true, y_pred):
     prec = []
@@ -51,6 +50,7 @@ def mean_iou(y_true, y_pred):
             score = tf.identity(score)
         prec.append(score)
     return K.mean(K.stack(prec), axis=0)
+
 
 # Predict on train, val and test
 model = load_model('model-tgs-salt-1.h5', custom_objects={'mean_iou': mean_iou})
@@ -105,6 +105,7 @@ def RLenc(img, order='F', format=True):
         return z[:-1]
     else:
         return runs
+
 
 pred_dict = {fn[:-4]:RLenc(np.round(preds_test_upsampled[i])) for i,fn in tqdm_notebook(enumerate(test_ids))}
 

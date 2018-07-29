@@ -1,6 +1,6 @@
 scikit-image
 keras
-tensorflow
+tensorflow-gpu
 pandas
 numpy
 tqdm
