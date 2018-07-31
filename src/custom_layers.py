@@ -5,6 +5,7 @@ except ImportError:
     from keras import initializers as initializations
 import keras.backend as K
 
+
 class Scale(Layer):
     '''Custom Layer for DenseNet used for BatchNormalization.
     
