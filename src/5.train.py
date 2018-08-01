@@ -4,7 +4,7 @@ import tensorflow as tf
 
 from tqdm import tqdm_notebook
 from skimage.transform import resize
-from keras.models import Model, load_model
+from keras.models import Model
 from keras.layers import Input
 from keras.layers.core import Lambda
 from keras.layers.convolutional import Conv2D, Conv2DTranspose
@@ -20,6 +20,7 @@ im_height = 128
 im_chan = 1
 path_train = '../input/train/'
 
+# Remove those black files with file size =107 bytes.
 train_ids = next(os.walk(path_train+"images"))[2]
 i = 0
 for n, id_ in tqdm_notebook(enumerate(train_ids), total=len(train_ids)):
@@ -27,8 +28,8 @@ for n, id_ in tqdm_notebook(enumerate(train_ids), total=len(train_ids)):
     if statinfo.st_size < 108:
         continue
     i += 1
-
 i += 1
+
 # Get and resize train images and masks
 X_train = np.zeros((i, im_height, im_width, im_chan), dtype=np.uint8)
 Y_train = np.zeros((i, im_height, im_width, 1), dtype=np.bool)
@@ -42,7 +43,7 @@ for n, id_ in tqdm_notebook(enumerate(train_ids), total=len(train_ids)):
     if statinfo.st_size < 108:
         continue
     i += 1
-    print(path + '/images/' + id_, ":", statinfo.st_size)
+    # print(path + '/images/' + id_, ":", statinfo.st_size)
     img = load_img(path + '/images/' + id_)
     x = img_to_array(img)[:, :, 1]
     x = resize(x, (128, 128, 1), mode='constant', preserve_range=True)
@@ -118,7 +119,7 @@ u10 = concatenate([u10, c0], axis=3)
 c10 = Conv2D(4, (3, 3), activation='relu', padding='same')(u10)
 c10 = Conv2D(4, (3, 3), activation='relu', padding='same')(c10)
 
-outputs = Conv2D(1, (1, 1), activation='sigmoid')(c10)
+outputs = Conv2D(1, (1, 1), activation='tanh')(c10)
 
 model = Model(inputs=[inputs], outputs=[outputs])
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[mean_iou])
@@ -128,8 +129,3 @@ earlystopper = EarlyStopping(patience=5, verbose=1)
 checkpointer = ModelCheckpoint('model-tgs-salt-1.h5', verbose=1, save_best_only=True)
 results = model.fit(X_train, Y_train, validation_split=0.1, batch_size=8, epochs=30,
                     callbacks=[earlystopper, checkpointer])
-
-# Predict on train, val and test
-# model = load_model('model-tgs-salt-1.h5', custom_objects={'mean_iou': mean_iou})
-# preds_train = model.predict(X_train[:int(X_train.shape[0]*0.9)], verbose=1)
-# preds_val = model.predict(X_train[int(X_train.shape[0]*0.9):], verbose=1)
