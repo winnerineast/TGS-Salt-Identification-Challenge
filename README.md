@@ -10,5 +10,10 @@ The third try is to see if a much finer CNN cell could help or not. The result i
 4 - the same model of 2 + remove black pictures:0.676
 5 - time to seek new structure:0.688
 change activation function from sigmoid to tanh.
+6 - revision based on model 5: no submission.
+change activation function to elu but the result is very bad, after finishing 30 epoch ti didn't get best result.
+Then I tried to enlarged the training dataset by rotate image 90 degree and the effect is just so so.
+7 - add K-means based on aggregation + model 5:
+
 
 
