@@ -14,6 +14,9 @@ change activation function from sigmoid to tanh.
 change activation function to elu but the result is very bad, after finishing 30 epoch ti didn't get best result.
 Then I tried to enlarged the training dataset by rotate image 90 degree and the effect is just so so.
 7 - add K-means based on aggregation + model 5:
+use K-mean to generate masks for test pictures.
+8 - double the depth based on model 5.
+and the result is not good.
 
 
 
